@@ -1,0 +1,53 @@
+<svg width="600" height="520" viewBox="0 0 600 520" xmlns="http://www.w3.org/2000/svg" role="img"
+     aria-label="Cartoon illustration of a handbag with arrows pointing to its handle, zipper, and strap">
+  <title>Handbag anatomy: handle, zipper, and strap</title>
+  <defs>
+    <marker id="arrowhead" viewBox="0 0 10 10" refX="8" refY="5"
+            markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2b2b2b"/>
+    </marker>
+  </defs>
+
+  <!-- strap, drawn behind the bag body -->
+  <path d="M190,280 C150,60 450,60 410,280" fill="none" stroke="#2b2b2b" stroke-width="18" stroke-linecap="round"/>
+  <path d="M190,280 C150,60 450,60 410,280" fill="none" stroke="#a5642f" stroke-width="11" stroke-linecap="round"/>
+
+  <!-- strap buckles where it meets the bag -->
+  <rect x="177" y="265" width="26" height="32" rx="6" fill="#4a2c1a" stroke="#2b2b2b" stroke-width="3"/>
+  <rect x="397" y="265" width="26" height="32" rx="6" fill="#4a2c1a" stroke="#2b2b2b" stroke-width="3"/>
+
+  <!-- top handle -->
+  <path d="M250,232 C250,150 350,150 350,232" fill="none" stroke="#2b2b2b" stroke-width="20" stroke-linecap="round"/>
+  <path d="M250,232 C250,150 350,150 350,232" fill="none" stroke="#a5642f" stroke-width="12" stroke-linecap="round"/>
+
+  <!-- bag body -->
+  <rect x="190" y="230" width="220" height="210" rx="28" fill="#eb8a63" stroke="#2b2b2b" stroke-width="6"/>
+  <!-- cartoon highlight -->
+  <rect x="208" y="248" width="34" height="172" rx="17" fill="#ffffff" opacity="0.18"/>
+  <!-- decorative stitching -->
+  <rect x="201" y="241" width="198" height="188" rx="20" fill="none"
+        stroke="#c96a43" stroke-width="2" stroke-dasharray="6 6" opacity="0.7"/>
+
+  <!-- zipper -->
+  <line x1="214" y1="248" x2="386" y2="248" stroke="#2b2b2b" stroke-width="4"/>
+  <path d="M220,242 l10,12 l10,-12 l10,12 l10,-12 l10,12 l10,-12 l10,12 l10,-12
+           l10,12 l10,-12 l10,12 l10,-12 l10,12 l10,-12 l10,12 l10,-12"
+        fill="none" stroke="#2b2b2b" stroke-width="2"/>
+  <rect x="284" y="245" width="16" height="24" rx="4" fill="#d9b24c" stroke="#2b2b2b" stroke-width="3"/>
+  <circle cx="292" cy="242" r="5" fill="none" stroke="#2b2b2b" stroke-width="3"/>
+
+  <!-- Strap label + arrow -->
+  <text x="300" y="34" text-anchor="middle" font-family="Helvetica, Arial, sans-serif"
+        font-size="26" font-weight="bold" fill="#2b2b2b">Strap</text>
+  <line x1="300" y1="42" x2="300" y2="94" stroke="#2b2b2b" stroke-width="3" marker-end="url(#arrowhead)"/>
+
+  <!-- Handle label + arrow -->
+  <text x="88" y="175" text-anchor="middle" font-family="Helvetica, Arial, sans-serif"
+        font-size="26" font-weight="bold" fill="#2b2b2b">Handle</text>
+  <line x1="128" y1="180" x2="248" y2="202" stroke="#2b2b2b" stroke-width="3" marker-end="url(#arrowhead)"/>
+
+  <!-- Zipper label + arrow -->
+  <text x="512" y="253" text-anchor="middle" font-family="Helvetica, Arial, sans-serif"
+        font-size="26" font-weight="bold" fill="#2b2b2b">Zipper</text>
+  <line x1="466" y1="248" x2="392" y2="248" stroke="#2b2b2b" stroke-width="3" marker-end="url(#arrowhead)"/>
+</svg>

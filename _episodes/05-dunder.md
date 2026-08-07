@@ -7,11 +7,15 @@ questions:
   operators?"
 - "How can classes allow their instances to behave like iterables or collections?"
 - "How can classes allow their instances to be called like functions?"
+- "How can I avoid writing repetitive `__init__`, `__repr__`, and
+  `__eq__` methods for simple data-holding classes?"
 objectives:
 - "Be able to implement methods like `__add__`, `__eq__`, and `__gt__`."
 - "Be able to implement methods like `__len__`, `__iter__`, and
   `__reversed__`."
 - "Be able to implement the `__call__` method."
+- "Be able to use the `@dataclass` decorator to reduce boilerplate in
+  data-holding classes."
 keypoints:
 - "Implement methods like `__eq__`, `__add__`, and `__gt__` to allow
   operations such as arithmetic and comparisons."
@@ -21,6 +25,9 @@ keypoints:
   make instances of a class behave like a collection or iterable."
 - "Implement the `__call__` method to make instances of a class
   callable like functions."
+- "Use `@dataclass` (from the `dataclasses` module) to auto-generate
+  `__init__`, `__repr__`, and `__eq__` for classes that mainly hold
+  data; you can still override any of them yourself."
 ---
 
 In the previous episodes, we built a `Triangle` class that could
@@ -171,6 +178,84 @@ Triangle([3, 4, 5])
 {: .output}
 
 
+## Simplifying data-holding classes with `dataclasses`
+
+Writing `__init__`, `__repr__`, and `__eq__` by hand every time we create a
+class that mainly just holds a fixed set of values is repetitive. Python's
+`dataclasses` module (part of the standard library since Python 3.7) can
+generate all three of these for us, from a list of type-annotated fields.
+
+Written by hand, a simple 2D point class looks like:
+
+~~~
+class Point:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+    def __repr__(self):
+        return f"Point(x={self.x!r}, y={self.y!r})"
+
+    def __eq__(self, other):
+        if not isinstance(other, Point):
+            return NotImplemented
+        return (self.x, self.y) == (other.x, other.y)
+~~~
+{: .language-python}
+
+Using `@dataclass`, this becomes:
+
+~~~
+from dataclasses import dataclass
+
+@dataclass
+class Point:
+    x: float
+    y: float
+~~~
+{: .language-python}
+
+~~~
+p1 = Point(1, 2)
+p2 = Point(1, 2)
+print(p1)
+print(p1 == p2)
+~~~
+{: .language-python}
+
+~~~
+Point(x=1, y=2)
+True
+~~~
+{: .output}
+
+The `x: float` and `y: float` lines are type-annotated field declarations,
+not assignments&mdash;`@dataclass` reads them to work out what `__init__`
+should accept and store, and what `__repr__` and `__eq__` should use.
+
+> ## `@dataclass` doesn't replace all your methods
+>
+> `@dataclass` only ever generates `__init__`, `__repr__`, `__eq__`, and
+> (with `order=True`) the ordering dunders `__lt__`, `__le__`, `__gt__`,
+> and `__ge__`. Anything else&mdash;`area()`, `perimeter()`, arithmetic
+> operators, custom validation&mdash;you still write yourself, exactly as
+> before. It removes repetitive constructor/representation/equality
+> boilerplate; it doesn't write your class's actual behaviour for you.
+{: .callout}
+
+> ## When the default `__eq__` isn't enough
+>
+> `@dataclass`'s generated `__eq__` compares fields in order, as if they
+> were a tuple. That's not always what we want: our `Triangle` class
+> needs to treat `[3, 4, 5]` and `[4, 5, 3]` as the same triangle, which a
+> plain field-by-field comparison can't express. If you define `__eq__`
+> yourself in the class body, it overrides the one `@dataclass` would
+> otherwise have generated, so you can mix and match&mdash;let
+> `@dataclass` write `__init__` and `__repr__`, and keep a hand-written
+> `__eq__` where the default logic isn't right.
+{: .callout}
+
+
 ## Other comparisons
 
 What about if we want to know how two objects compare to each other?
@@ -232,10 +317,21 @@ class Triangle(Polygon):
 ~~~
 {: .language-python}
 
+> ## Ordering with `@dataclass`
+>
+> If a class uses `@dataclass`, you get the same result by passing
+> `order=True` to the decorator (`@dataclass(order=True)`) instead of
+> writing `__lt__` and applying `@total_ordering`&mdash;`dataclass` will
+> generate all of `__lt__`, `__le__`, `__gt__`, and `__ge__` for you,
+> again comparing fields in field-declaration order. This only works
+> for the default, tuple-like comparison; `Triangle`'s "same triangle in
+> any rotation" logic still needs to be written by hand, as above.
+{: .callout}
+
 > ## Sorting random triangles
 >
 > Add a class method that generates a triangle with three random edge
-> lengths (for example, using `random.random()`. Use this to construct
+> lengths (for example, using `random.random()`). Use this to construct
 > and sort a list of 10 random triangles.
 >
 >> ## Solution
@@ -284,18 +380,30 @@ class Triangle(Polygon):
 > defined with methods like `__add__`, `__sub__`, and `__mul__`.
 >
 > Define a new class `ErrorBar` to represent a number with an
-> associated error in Gaussian statistics. Add `__init__`, `__repr__`,
-> `__add__`, `__sub__`, `__mul__`, and `__truediv__` methods, making
-> the (very unreasonable) assumption that all errors are
-> uncorrelated.
+> associated error in Gaussian statistics, with fields `centre` and
+> `error`. Use `@dataclass` so you don't have to write `__init__` by
+> hand, and add `__repr__`, `__add__`, `__sub__`, `__mul__`, and
+> `__truediv__` methods, making the (very unreasonable) assumption that
+> all errors are uncorrelated.
 >
 >> ## Solution
 >>
+>> `@dataclass` generates `__init__` (and `__eq__`) for us from the
+>> `centre` and `error` field declarations. We still write `__repr__`
+>> ourselves, since we want the `"centre ± error"` format rather than
+>> the default `ErrorBar(centre=..., error=...)` one that `@dataclass`
+>> would otherwise generate&mdash;defining it in the class body
+>> overrides the auto-generated version. The arithmetic methods aren't
+>> something `@dataclass` can generate at all, so those are hand-written
+>> as before.
+>>
 >> ~~~
+>> from dataclasses import dataclass
+>>
+>> @dataclass
 >> class ErrorBar:
->>     def __init__(self, centre, error):
->>         self.centre = centre
->>         self.error = error
+>>     centre: float
+>>     error: float
 >>
 >>     def __repr__(self):
 >>         return f"{self.centre} ± {self.error}"
@@ -323,6 +431,25 @@ class Triangle(Polygon):
 >>         return ErrorBar(centre, error)
 >> ~~~
 >> {: .language-python}
+>>
+>> Testing this, note that we also get `__eq__` for free from
+>> `@dataclass`:
+>>
+>> ~~~
+>> a = ErrorBar(1.0, 0.1)
+>> b = ErrorBar(1.0, 0.1)
+>> print(a)
+>> print(a == b)
+>> print(a + ErrorBar(2.0, 0.2))
+>> ~~~
+>> {: .language-python}
+>>
+>> ~~~
+>> 1.0 ± 0.1
+>> True
+>> 3.0 ± 0.223606797749979
+>> ~~~
+>> {: .output}
 > {: .solution}
 {: .challenge}
 
@@ -532,7 +659,7 @@ for side_length in a_polygon:
 > Once a class has `__getitem__()` defined, then Python will
 > automatically work out how to loop over it, even in the absence of
 > `__iter__()` (although adding this does make it more
-> efficient). Even beter, when `__len__()` is also implemented, then
+> efficient). Even better, when `__len__()` is also implemented, then
 > Python automatically knows how to `reversed()` the class as well.
 >
 > Test this by removing the implementations of `__iter__()` and

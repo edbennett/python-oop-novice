@@ -32,7 +32,7 @@ If you installed Anaconda, you can launch a notebook in two ways:
 > ## Anaconda Navigator
 >
 > 1. Launch Anaconda Navigator.
-> It might ask you if you'd like to send anonymized usage information to Anaconda developers:
+> It might ask you if you'd like to send anonymised usage information to Anaconda developers:
 > ![Anaconda Navigator first launch](../fig/anaconda-navigator-first-launch.png)
 > Make your choice and click "Ok, and don't show again" button.
 > 2. Find the "Notebook" tab and click on the "Launch" button:
